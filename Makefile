@@ -6,12 +6,12 @@
 #    By: gkessler <gkessler@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/11/20 15:49:41 by eloren-l          #+#    #+#              #
-#    Updated: 2019/02/05 22:23:25 by gkessler         ###   ########.fr        #
+#    Updated: 2019/02/10 16:12:08 by gkessler         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 MAIN = main.c
-SRCS = main.c vec_sc.c
+SRCS = main.c vec_sc.c cone.c roll.c plane.c on_button_press.c ray_tracing.c compute_light.c get_light.c ray_sphere.c rtv1.c
 SRCS_L = $(addprefix libft/,$(SRCS_LNAME))
 SRCS_LNAME = ft_atoi.c ft_bzero.c ft_foreach.c ft_isalnum.c ft_isalpha.c ft_isascii.c \
 		ft_isdigit.c ft_isprint.c ft_itoa.c ft_list_at.c ft_list_size.c ft_lstadd.c \
@@ -33,13 +33,13 @@ FLAGS = -I$(INCLUDES)
 all: $(NAME)
 
 $(NAME): $(LIB) $(OBJECTS) $(MAIN)
-	gcc $(FLAGS) -L. -lft -o $(NAME) $(OBJECTS) minilibx_macos/libmlx.a -framework OpenGl -framework Appkit
+	gcc $(FLAGS) -L. -lft -o $(NAME) $(OBJECTS) -lmlx -framework OpenGl -framework Appkit
 
 $(LIB): $(OBJECTS_L)
 	ar rc $@ $^
 	ranlib $@
 
-%.o: %.c
+%.o: %.c 
 	gcc $(FLAGS) -o $@ -c $<
 
 clean:
