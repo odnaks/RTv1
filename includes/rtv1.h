@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   rtv1.h                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: drestles <drestles@student.42.fr>          +#+  +:+       +#+        */
+/*   By: gkessler <gkessler@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/05 17:13:44 by gkessler          #+#    #+#             */
-/*   Updated: 2019/02/10 23:01:44 by drestles         ###   ########.fr       */
+/*   Updated: 2019/02/11 17:47:00 by gkessler         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@
 # include <fcntl.h>
 # include <stdio.h>
 # include <math.h>
+# include "libft.h"
 
 # define W_W 600
 # define W_H 600
@@ -62,6 +63,9 @@ typedef struct  s_obj
 	double		a;
 	double		b;
 	double		c;
+	double		a_xy;
+	double		a_yz;
+	double		a_xz;
 	int			type;
 	t_vec3		r_n;
 	double		(*func)(struct s_obj *obj, struct s_rt *rt);
@@ -75,11 +79,12 @@ struct s_rt
 	t_vec3		cam;
 	t_vec3		move;
 	t_obj		light;
+	t_obj		light1;
 	double		res;
 	int			color;
+	int 		color1;
 	t_obj		obj;
 	t_obj		objects[10];
-	t_vec3		null;
 	double		amb;
 	t_vec3		dir;
 	t_vec3		init;
@@ -87,6 +92,7 @@ struct s_rt
 	double		rot_xy;
 	double		rot_yz;
 	double		rot_xz;
+	int			obj_number;
 };
 
 double			vec_sc(t_vec3 a, t_vec3 b);
@@ -103,7 +109,7 @@ double			ray_plane_y(t_obj *obj, t_rt *rt);
 double			ray_plane_z(t_obj *obj, t_rt *rt);
 double 			ray_sphere(t_obj *obj, t_rt *rt);
 double			compute_specular(t_vec3 n, t_vec3 l, double ia, t_vec3 v, double s);
-int				get_light(t_obj *obj, t_rt *rt);
+double			get_light(t_obj *obj, t_rt *rt);
 t_vec3			init_tracing(t_rt *rt, int i, int j);
 void    		on_button_press(int key, t_rt *rt);
 int   			on_button_press_2(int key, t_rt *rt);
@@ -112,5 +118,13 @@ double      	ray_roll(t_obj *obj, t_rt *rt);
 void			rtv1(t_rt *rt);
 int				exit_x(int a);
 t_vec3			init_direction(t_obj *obj, t_rt *rt);
+int				parser(char *file, t_rt *rt);
+int				ft_atoi_base(char *str, int base);
+int				parse_string(char *line, t_rt *rt);
+int				define_object(char *line, t_rt *rt);
+size_t			strclen(char *line, char c);
+int				parse_object(char *line, t_rt *rt, int index, int type);
+int				get_color(double ia, t_obj obj);
+double			get_light2(t_obj *obj, t_rt *rt);
 
 #endif

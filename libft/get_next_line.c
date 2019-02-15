@@ -6,86 +6,54 @@
 /*   By: gkessler <gkessler@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2018/11/29 13:46:17 by gkessler          #+#    #+#             */
-/*   Updated: 2019/01/06 17:31:22 by gkessler         ###   ########.fr       */
+/*   Updated: 2019/02/11 10:47:36 by gkessler         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-static	int				ft_strint(char *src, int c)
+static int	out_lines(char **line, char *reader)
 {
-	if (!src)
-		return (0);
-	while (*src)
+	char *s;
+
+	s = ft_strchr(reader, '\n');
+	if (s)
 	{
-		if (*src == c)
-			return (1);
-		src++;
-	}
-	if (*src == c)
+		s[0] = '\0';
+		*line = ft_strdup(reader);
+		ft_memmove(reader, &s[1], ft_strlen(&s[1]) + 1);
 		return (1);
+	}
+	else if (ft_strlen(reader) > 0)
+	{
+		*line = ft_strdup(reader);
+		*reader = 0;
+		return (1);
+	}
 	return (0);
 }
 
-static	char			*ft_to_line(char ***fresh, int fd)
+int			get_next_line(const int fd, char **line)
 {
-	char	*tmp;
-	char	*line;
-	int		i;
+	static char	*reader[MAX_FD];
+	char		buffer[BUFF_SIZE + 1];
+	int			size;
+	char		*temp;
 
-	i = 0;
-	if (!(*fresh)[fd])
-		return (0);
-	tmp = (*fresh)[fd];
-	while (tmp[i] != '\n' && tmp[i])
-		i++;
-	line = NULL;
-	line = ft_strsub(tmp, 0, i);
-	if (i < (int)ft_strlen(tmp))
-		(*fresh)[fd] = ft_strdup(&tmp[i + 1]);
-	else
-		(*fresh)[fd] = ft_strdup("\0");
-	free(tmp);
-	return (line);
-}
-
-static	char			*ft_newjoin(char *oldfresh, char *buf)
-{
-	char	*newfresh;
-
-	if (oldfresh == 0)
-		oldfresh = ft_strnew(0);
-	if (!(newfresh = ft_strnew(ft_strlen(oldfresh) + ft_strlen(buf))))
-		return (0);
-	bzero(newfresh, ft_strlen(oldfresh) + ft_strlen(buf));
-	ft_strcpy(newfresh, oldfresh);
-	ft_strcat(newfresh, buf);
-	free(oldfresh);
-	return (newfresh);
-}
-
-int						get_next_line(int fd, char **line)
-{
-	char		buf[BUFF_SIZE + 1];
-	static char **fresh = 0;
-	int			bt;
-
-	bt = 0;
-	if (!fresh && !(fresh = (char **)malloc(sizeof(char *) * 1000)))
+	if (fd < 0 || fd > MAX_FD || !line)
 		return (-1);
-	if (!line || fd < 0 || fd > 999)
+	if (!reader[fd] && !(reader[fd] = ft_strnew(1)))
 		return (-1);
-	if ((ft_strint(fresh[fd], '\n')) == 0)
-		while ((bt = read(fd, buf, BUFF_SIZE)) > 0)
-		{
-			buf[bt] = '\0';
-			fresh[fd] = ft_newjoin(fresh[fd], buf);
-			if (ft_strchr(buf, '\n'))
-				break ;
-		}
-	if (bt < 0)
-		return (-1);
-	if (ft_strlen(fresh[fd]))
-		return (!!(*line = ft_to_line(&fresh, fd)));
-	return (0);
+	while (!ft_strchr(reader[fd], '\n'))
+	{
+		if ((size = read(fd, buffer, BUFF_SIZE)) == -1)
+			return (-1);
+		if (size == 0)
+			break ;
+		buffer[size] = '\0';
+		temp = ft_strjoin(reader[fd], buffer);
+		free(reader[fd]);
+		reader[fd] = temp;
+	}
+	return (out_lines(line, reader[fd]));
 }

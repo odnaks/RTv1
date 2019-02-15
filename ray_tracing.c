@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ray_tracing.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: drestles <drestles@student.42.fr>          +#+  +:+       +#+        */
+/*   By: gkessler <gkessler@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/10 15:46:06 by gkessler          #+#    #+#             */
-/*   Updated: 2019/02/10 23:06:31 by drestles         ###   ########.fr       */
+/*   Updated: 2019/02/15 15:39:14 by gkessler         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,21 +43,21 @@ t_vec3 init_direction(t_obj *obj, t_rt *rt)
 	else if (obj->type == 1)
 	{
 		obj->r_n.x = obj->radius;
-		obj->r_n.y = 0.000000+ rt->cam.y;
-		obj->r_n.z = 0.000000+ rt->cam.z;
+		obj->r_n.y = rt->light.dot.y;
+		obj->r_n.z = rt->light.dot.z;
 		obj->oc = vec_minus(rt->cam, obj->r_n);
 	}
 	else if (obj->type == 2)
 	{
-		obj->r_n.x = 0.000000+ rt->cam.x;
+		obj->r_n.x = rt->light.dot.x;
 		obj->r_n.y = obj->radius;
-		obj->r_n.z = 0.000000+ rt->cam.y;
+		obj->r_n.z = rt->light.dot.z;
 		obj->oc = vec_minus(rt->cam, obj->r_n);
 	}
 	else
 	{
-		obj->r_n.x = 0.000000 + rt->cam.x;
-		obj->r_n.y = 0.000000+ rt->cam.y;
+		obj->r_n.x = rt->light.dot.x;
+		obj->r_n.y = rt->light.dot.y;
 		obj->r_n.z = obj->radius;
 		obj->oc = vec_minus(rt->cam, obj->r_n);
 	}
